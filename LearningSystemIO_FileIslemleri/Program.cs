@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace LearningSystemIO_FileIslemleri
@@ -14,8 +15,35 @@ namespace LearningSystemIO_FileIslemleri
             #region Bütün dosya işlemleri
             string path     = "C:\\Learning\\Udemy";
             string target   = "C:\\Learning\\Udemy2";
-            char input;
             
+            string directoryPath1 = "C:\\Udemy";
+            string directoryPath2 = "C:\\Udemy2";
+            
+            char input;
+
+            /*
+             * File işlemlerini yapmadan önce yukarıda kendinize path ve target seçip onları oluşturmanız gerekmektedir.
+             * Elinizle oluşturabilirsiniz veya aşağıdaki kodları da kullanabilirsiniz!
+             * 
+             * Bunları yapmadan taktir edersiniz ki hata alırsınız :D
+             */
+
+
+            if (!Directory.Exists(directoryPath1) && !Directory.Exists(directoryPath2))
+            {
+                Console.WriteLine("Klasörler oluşturuluyor!");
+                Directory.CreateDirectory(directoryPath1);
+                Directory.CreateDirectory(directoryPath2);
+                System.Threading.Thread.Sleep(1000);
+
+                Console.WriteLine("Klasörler oluşturdu!");
+            }
+            else
+            {
+                Console.WriteLine("İstenilen klasörler mevcut!");
+            }
+
+
             do
             {
                 Console.WriteLine("Yapmak istediğiniz işlem nedir?");
@@ -88,7 +116,7 @@ namespace LearningSystemIO_FileIslemleri
                             string inputName = Console.ReadLine();
                             
                             
-                            string lastPath = path + "\\"+ inputName + ".txt";
+                            string lastPath = path + "\\"+ fileNameRegulation(inputName) + ".txt";
 
                             if (fileExists(lastPath))
                             {
@@ -116,8 +144,8 @@ namespace LearningSystemIO_FileIslemleri
                                 Console.WriteLine("Düzeltme işlemlerinden sonra dosya taşınıyor!");
                                 System.Threading.Thread.Sleep(1000);
 
-                                string fileToBeMove = path + "\\" + lastName + ".txt";
-                                string fileTarget   = target + "\\" + lastName + ".txt";
+                                string fileToBeMove = path      + "\\" +   fileNameRegulation(lastName) + ".txt";
+                                string fileTarget   = target    + "\\" +   fileNameRegulation(lastName) + ".txt";
 
                                 if (fileExists(fileTarget))
                                 {
@@ -143,8 +171,8 @@ namespace LearningSystemIO_FileIslemleri
                                 Console.WriteLine("Düzeltme işlemlerinden sonra dosya taşınıyor!");
                                 System.Threading.Thread.Sleep(1000);
 
-                                string fileToBeCopy = path + "\\" + lastName + ".txt";
-                                string fileTarget   = target + "\\" + lastName + ".txt";
+                                string fileToBeCopy = path      + "\\" +   fileNameRegulation(lastName) + ".txt";
+                                string fileTarget   = target    + "\\" +   fileNameRegulation(lastName) + ".txt";
 
                                 if(fileExists(fileToBeCopy))
                                 {
@@ -161,7 +189,15 @@ namespace LearningSystemIO_FileIslemleri
                         #endregion
                         
                         case '5':
-                            Console.WriteLine("Silmek istediğiniz");
+                            Console.WriteLine("Silmek istediğiniz dosyanın adını yazın: ");
+                            fileName = Console.ReadLine();
+                            lastFourCharacter = fileName.Substring(fileName.Length - 4);
+                            if( lastFourCharacter == ".txt")
+                            {
+                                string lastName = fileName.Replace(".txt", "");
+                            }
+
+
                             break;
 
 
@@ -208,16 +244,11 @@ namespace LearningSystemIO_FileIslemleri
         }
         static string fileNameRegulation(string fileName)
         {
-            string lastFourLetter = fileName.Substring(fileName.Length - 4);
-            if(lastFourLetter == ".txt")
-            {
-                string lastlyFileName = fileName.Replace(".txt", "");
-                return lastlyFileName;
-            }
-            else
-            {
-                return fileName;
-            }
+            string pattern = @"[!@#$%^&*()+{}\[\]:;<>,.?~\\|]"; // Regex pattern içerisinde sadece '_' yok !
+            MatchCollection matches = Regex.Matches(fileName, pattern);
+
+            return Regex.Replace(fileName, pattern, "");
+
         }
     }
 }
