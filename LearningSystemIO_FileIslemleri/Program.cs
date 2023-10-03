@@ -11,54 +11,177 @@ namespace LearningSystemIO_FileIslemleri
     {
         static void Main(string[] args)
         {
-            string path = "C:\\Udemy\\merhaba.txt";
+            #region Bütün dosya işlemleri
+            string path     = "C:\\Learning\\Udemy";
+            string target   = "C:\\Learning\\Udemy2";
+            char input;
+            
+            do
+            {
+                Console.WriteLine("Yapmak istediğiniz işlem nedir?");
+                Console.WriteLine(  "0- Uygulamadan çıkış\n" +
+                                    "1- Dosyaları görüntüle!\n" +
+                                    "2- Dosya oluşturma işlemi\n" +
+                                    "3- Dosya taşıma işlemi\n" +
+                                    "4- Dosya kopyalama işlemi\n" +
+                                    "5- Dosya silme işlemi\n");
+                
+                string line = Console.ReadLine();
 
-            // fileCreate("C:\\Udemy\\merhaba.txt");
-            bool control = fileExists((string)path);
-            if (control)
-            {
-                Console.WriteLine("Bu dosya bu yol üzerinde var");
-            }
-            else
-            {
-                fileCreate(path);
-                Console.WriteLine("Dosya oluşturuldu!");
-            }
-            #region Dosyayı bul ve sil!
-            if (fileExists(path))
-            {
-                Console.WriteLine("Dosya mevcut. Dosyayı silmek ister misiniz?");
-                while (true)
+                if (string.IsNullOrWhiteSpace(line))
                 {
+                    Console.WriteLine("Geçersiz giriş. Tekrar deneyin!");
+                    break;
+                }
+                else 
+                {
+                    input = line[0]; 
+                }
+                if (char.IsDigit(input))
+                {
+                    switch(input)
+                    {
+                        #region Sistemden çıkış kodları
+                        case '0':
+                            return;
+                        #endregion
 
-                    string answer = Console.ReadLine().ToUpper();
-                    if (answer.Length == 1 && char.IsLetter(answer[0]))
-                    {
-                        if (answer[0] == 'Y')
-                        {
-                            Console.WriteLine("Dosya siliniyor!");
-                            fileDelete(path);
-                            System.Threading.Thread.Sleep(2000);
-                            Console.WriteLine("Silindi!");
+                        #region Dosya görüntüleme
+                        case '1':
+                            string[] fileList1 = Directory.GetFiles(path);
+                            string[] fileList2 = Directory.GetFiles(target);
+
+                            Console.WriteLine("\n1.Klasördeki Dosyalar:");
+                            Console.WriteLine("________________________");
+                            if(fileList1.Length != 0)
+                            {
+                                foreach (string file in fileList1)
+                                {
+                                    Console.WriteLine(file);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Klasör Boş!");
+                            }
+
+                            Console.WriteLine("\n2.Klasördeki Dosyalar:");
+                            Console.WriteLine("________________________");
+                            if (fileList2.Length != 0)
+                            {
+                                foreach (string file in fileList2)
+                                {
+                                    Console.WriteLine(file);
+                                }
+
+                            }
+                            else
+                            {
+                                Console.WriteLine("Klasör boş!");
+                            }
                             break;
-                        }
-                        else if (answer[0] == 'N')
-                        {
-                            Console.WriteLine("Dosya silinmedi");
+                        #endregion
+
+                        #region Dosya oluşturma
+                        case '2':
+                            Console.WriteLine("Dosya ismi ne olsun?");
+                            string inputName = Console.ReadLine();
+                            
+                            
+                            string lastPath = path + "\\"+ inputName + ".txt";
+
+                            if (fileExists(lastPath))
+                            {
+                                Console.WriteLine("Bu dosya ismi zaten mevcut");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Dosya oluşturuluyor!");
+                                fileCreate(lastPath);
+                                System.Threading.Thread.Sleep(1000);
+                                Console.WriteLine("Dosya oluşturuldu!");
+                            }
+
                             break;
-                        }
-                    }
-                    else
-                    {
-                        Console.WriteLine("Lütfen Y veya N yazın");
+                        #endregion
+
+                        #region Dosya Taşıma
+                        case '3':
+                            Console.WriteLine("Taşımak istediğiniz dosyanın adını yazın:");
+                            string fileName = Console.ReadLine();
+                            string lastFourCharacter = fileName.Substring(fileName.Length - 4);
+                            if (lastFourCharacter == ".txt")
+                            {
+                                string lastName = fileName.Replace(".txt", "");
+                                Console.WriteLine("Düzeltme işlemlerinden sonra dosya taşınıyor!");
+                                System.Threading.Thread.Sleep(1000);
+
+                                string fileToBeMove = path + "\\" + lastName + ".txt";
+                                string fileTarget   = target + "\\" + lastName + ".txt";
+
+                                if (fileExists(fileTarget))
+                                {
+                                    Console.WriteLine("Dosya burada zaten mevcut!");
+                                }
+                                else
+                                {
+                                    fileMove(fileToBeMove, fileTarget);
+                                    Console.WriteLine("Dosya taşındı!");
+                                }
+                            }
+                            break;
+                        #endregion
+
+                        #region Dosya Kopyalama
+                        case '4':
+                            Console.WriteLine("Kopyalamak istediğniz dosyanın adını yazın:");
+                            fileName = Console.ReadLine();
+                            lastFourCharacter = fileName.Substring(fileName.Length - 4);
+                            if(lastFourCharacter == ".txt")
+                            {
+                                string lastName = fileName.Replace(".txt", "");
+                                Console.WriteLine("Düzeltme işlemlerinden sonra dosya taşınıyor!");
+                                System.Threading.Thread.Sleep(1000);
+
+                                string fileToBeCopy = path + "\\" + lastName + ".txt";
+                                string fileTarget   = target + "\\" + lastName + ".txt";
+
+                                if(fileExists(fileToBeCopy))
+                                {
+                                    Console.WriteLine("Dosya zaten mevcut!");
+                                }
+                                else
+                                {
+                                    fileCopy(fileToBeCopy, fileTarget);
+                                    Console.WriteLine("Dosya Taşındı!");
+                                }
+                            }
+
+                            break;
+                        #endregion
+                        
+                        case '5':
+                            Console.WriteLine("Silmek istediğiniz");
+                            break;
+
+
+                        #region Geçersiz seçenek
+                        default:
+                            Console.WriteLine("Geçersiz seçenek!");
+                            break;
+                        #endregion
                     }
                 }
-            }
-            else
-            {
-                Console.WriteLine("Dosya mevcut değil!");
-            }
+                else
+                {
+                    Console.WriteLine("Lütfen 1-5 arasında bir rakam giriniz!");
+                }
+                Console.WriteLine();
+
+            } while (input != 0);
             #endregion
+
+
         }
         static void fileCreate(string path)
         {
@@ -74,6 +197,27 @@ namespace LearningSystemIO_FileIslemleri
         static void fileDelete(string path)                 // Belirtilen path'deki dosyayı siler.
         {
             File.Delete(path);
+        }
+        static void fileMove(string path, string target)    // Belirtilen path'e belirtilen dosyayı taşır.
+        {
+            File.Move(path, target);
+        }
+        static void fileCopy(string path, string target)    // Belirtilen path'e dosyayı kopyalar!
+        {
+            File.Copy(path, target);
+        }
+        static string fileNameRegulation(string fileName)
+        {
+            string lastFourLetter = fileName.Substring(fileName.Length - 4);
+            if(lastFourLetter == ".txt")
+            {
+                string lastlyFileName = fileName.Replace(".txt", "");
+                return lastlyFileName;
+            }
+            else
+            {
+                return fileName;
+            }
         }
     }
 }
